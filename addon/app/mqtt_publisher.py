@@ -23,6 +23,8 @@ _DEVICE = {
 T_SPACE = f"{_PREFIX}/space/state"
 T_ATTRS = f"{_PREFIX}/space/attributes"
 T_CARS = f"{_PREFIX}/cars/state"
+T_HOME = f"{_PREFIX}/home/state"
+T_HOME_ATTRS = f"{_PREFIX}/home/attributes"
 T_IMAGE = f"{_PREFIX}/debug/image"
 T_AVAIL = f"{_PREFIX}/status"
 
@@ -54,6 +56,17 @@ class Publisher:
             "icon": "mdi:parking",
             **avail,
         })
+        self._cfg("binary_sensor", "home", {
+            "name": "Vehicle home",
+            "unique_id": f"{_PREFIX}_home",
+            "state_topic": T_HOME,
+            "payload_on": "ON",
+            "payload_off": "OFF",
+            "json_attributes_topic": T_HOME_ATTRS,
+            "device_class": "presence",
+            "icon": "mdi:car-back",
+            **avail,
+        })
         self._cfg("sensor", "cars", {
             "name": "Cars detected",
             "unique_id": f"{_PREFIX}_cars",
@@ -79,6 +92,12 @@ class Publisher:
         self.client.publish(T_SPACE, "ON" if result.space_available else "OFF",
                              retain=True)
         self.client.publish(T_CARS, str(result.cars_detected), retain=True)
+        self.client.publish(T_HOME, "ON" if result.own_vehicle_home else "OFF",
+                             retain=True)
+        self.client.publish(T_HOME_ATTRS, json.dumps({
+            "matched_spot": result.own_vehicle_spot,
+            "match_iou": result.own_vehicle_iou,
+        }), retain=True)
         self.client.publish(T_ATTRS, json.dumps({
             "chosen_spot": result.chosen_spot,
             "free_spots": result.free_spots,

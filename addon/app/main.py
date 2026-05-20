@@ -67,7 +67,8 @@ def run_once(opts, finder, publisher):
     result = finder.analyse(img)
     publisher.publish_result(result)
     log(f"cars={result.cars_detected} free_spots={result.free_spots} "
-        f"chosen={result.chosen_spot}")
+        f"chosen={result.chosen_spot} home={result.own_vehicle_home} "
+        f"(iou={result.own_vehicle_iou})")
 
 
 def main():
@@ -85,6 +86,7 @@ def main():
             classes=class_ids,
             imgsz=opts["imgsz"],
             dilate=opts["dilate"],
+            own_vehicle_iou=opts["own_vehicle_iou"],
         )
     except FileNotFoundError:
         sys.exit(f"Lookup file not found: {opts['lookup_file']} — "

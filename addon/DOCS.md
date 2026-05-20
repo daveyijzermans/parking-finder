@@ -6,8 +6,11 @@ Assistant as three MQTT-discovered entities:
 - **binary_sensor** `Parking space available` — on when at least one spot fits.
   Attributes: `chosen_spot`, `free_spots`, `cars_detected`.
 - **sensor** `Cars detected` — number of vehicles seen in the frame.
+- **binary_sensor** `Vehicle home` — on when a detected car closely matches
+  one of your known parking positions (your own car is parked). Attributes:
+  `matched_spot`, `match_iou`.
 - **camera** `Parking debug image` — the visualization (red = obstacles,
-  green = free spots, bright outline = chosen spot).
+  green = free spots, bright green outline = chosen spot, orange = your car).
 
 ## Requirements
 
@@ -31,6 +34,7 @@ Assistant as three MQTT-discovered entities:
 | `conf` | YOLO detection confidence threshold (0–1). |
 | `dilate` | Safety margin in pixels around detected vehicles. |
 | `imgsz` | YOLO inference image size (multiple of 32). |
+| `own_vehicle_iou` | Min overlap (0–1) for a detected car to count as your own vehicle. Higher = stricter match. |
 | `classes` | Vehicle types treated as obstacles: `bicycle`, `car`, `motorcycle`, `bus`, `truck`. |
 
 The camera snapshot and MQTT broker credentials are obtained automatically
