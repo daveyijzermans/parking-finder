@@ -1,5 +1,5 @@
 name: Parking Finder
-version: "0.1.1"
+version: "0.1.2"
 slug: parking_finder
 description: Detect open parking spots from a camera using YOLO segmentation
 url: https://github.com/daveyijzermans/parking-finder

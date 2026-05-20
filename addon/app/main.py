@@ -39,6 +39,28 @@ def decode_image(raw_bytes):
     return img
 
 
+def connect_mqtt(retry_delay=30):
+    """Get broker config from the Supervisor and connect, retrying forever.
+
+    The MQTT service can be briefly unavailable (broker still starting, or
+    Supervisor restarted and the broker hasn't re-published its service yet).
+    Retrying instead of exiting keeps the add-on alive through those gaps.
+    """
+    attempt = 0
+    while True:
+        attempt += 1
+        try:
+            cfg = supervisor.get_mqtt_config()
+            log(f"Connecting to MQTT {cfg['host']}:{cfg['port']}")
+            publisher = Publisher(**cfg)
+            publisher.publish_discovery()
+            return publisher
+        except Exception as e:
+            log(f"MQTT not ready (attempt {attempt}): {e} — "
+                f"retrying in {retry_delay}s")
+            time.sleep(retry_delay)
+
+
 def run_once(opts, finder, publisher):
     raw = supervisor.fetch_camera_snapshot(opts["camera_entity"])
     img = decode_image(raw)
@@ -70,10 +92,7 @@ def main():
     log(f"Loaded {len(finder.contours)} candidate spots "
         f"at {finder.lw}x{finder.lh}")
 
-    mqtt_cfg = supervisor.get_mqtt_config()
-    log(f"Connecting to MQTT {mqtt_cfg['host']}:{mqtt_cfg['port']}")
-    publisher = Publisher(**mqtt_cfg)
-    publisher.publish_discovery()
+    publisher = connect_mqtt()
 
     try:
         while True:
