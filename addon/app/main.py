@@ -53,7 +53,9 @@ def main():
     log(f"Starting. camera={opts['camera_entity']} "
         f"interval={opts['scan_interval']}s")
 
-    class_ids = [COCO_CLASS_IDS[c] for c in opts["classes"]]
+    # Accept either named values (car, bus, ...) or raw COCO integer IDs
+    class_ids = [c if isinstance(c, int) else COCO_CLASS_IDS[c]
+                 for c in opts["classes"]]
     try:
         finder = ParkingFinder(
             lookup_path=opts["lookup_file"],
