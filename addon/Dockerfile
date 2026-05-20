@@ -10,11 +10,12 @@ RUN apt-get update \
 
 WORKDIR /opt/parking-finder
 
-# Install the CPU-only torch wheel first so ultralytics does not pull CUDA.
+# Install CPU-only torch + torchvision from the same index so their compiled
+# ops match (a mismatched torchvision fails with "operator nms does not exist").
 # ultralytics depends on the full opencv-python (needs X11/GUI libs); swap it
 # for the headless build afterwards so no GUI system libraries are required.
 COPY requirements.txt ./
-RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu \
+RUN pip install --no-cache-dir torch torchvision --index-url https://download.pytorch.org/whl/cpu \
     && pip install --no-cache-dir -r requirements.txt \
     && pip uninstall -y opencv-python opencv-contrib-python || true \
     && pip install --no-cache-dir --force-reinstall opencv-python-headless==4.13.0.92
