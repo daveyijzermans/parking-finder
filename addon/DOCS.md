@@ -30,8 +30,8 @@ Assistant as three MQTT-discovered entities:
 | `lookup_file` | Path to the contour lookup file inside the container. |
 | `conf` | YOLO detection confidence threshold (0–1). |
 | `dilate` | Safety margin in pixels around detected vehicles. |
-| `imgsz` | YOLO inference image size. |
-| `classes` | COCO classes treated as obstacles (2=car, 5=bus, 7=truck). |
+| `imgsz` | YOLO inference image size (multiple of 32). |
+| `classes` | Vehicle types treated as obstacles: `bicycle`, `car`, `motorcycle`, `bus`, `truck`. |
 
 The camera snapshot and MQTT broker credentials are obtained automatically
 from the Supervisor — no extra configuration needed.

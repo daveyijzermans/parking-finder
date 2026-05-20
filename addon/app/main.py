@@ -12,6 +12,15 @@ from app.mqtt_publisher import Publisher
 
 OPTIONS_PATH = "/data/options.json"
 
+# COCO class IDs for the vehicle types selectable in the add-on config
+COCO_CLASS_IDS = {
+    "bicycle": 1,
+    "car": 2,
+    "motorcycle": 3,
+    "bus": 5,
+    "truck": 7,
+}
+
 
 def log(msg):
     print(f"[parking-finder] {msg}", flush=True)
@@ -44,11 +53,12 @@ def main():
     log(f"Starting. camera={opts['camera_entity']} "
         f"interval={opts['scan_interval']}s")
 
+    class_ids = [COCO_CLASS_IDS[c] for c in opts["classes"]]
     try:
         finder = ParkingFinder(
             lookup_path=opts["lookup_file"],
             conf=opts["conf"],
-            classes=opts["classes"],
+            classes=class_ids,
             imgsz=opts["imgsz"],
             dilate=opts["dilate"],
         )

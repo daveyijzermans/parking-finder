@@ -22,9 +22,9 @@ options:
   dilate: 10
   imgsz: 1280
   classes:
-    - 2
-    - 5
-    - 7
+    - car
+    - bus
+    - truck
 schema:
   camera_entity: str
   scan_interval: int(30,)
@@ -33,4 +33,4 @@ schema:
   dilate: int(0,)
   imgsz: int(320,)
   classes:
-    - int
+    - list(bicycle|car|motorcycle|bus|truck)
