@@ -1,0 +1,5 @@
+numpy==2.4.6
+opencv-python-headless==4.13.0.92
+ultralytics==8.4.52
+paho-mqtt==2.1.0
+requests==2.32.3

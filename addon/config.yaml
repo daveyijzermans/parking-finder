@@ -1,0 +1,36 @@
+name: Parking Finder
+version: "0.1.0"
+slug: parking_finder
+description: Detect open parking spots from a camera using YOLO segmentation
+url: https://github.com/daveyijzermans/parking-finder
+arch:
+  - amd64
+  - aarch64
+init: false
+homeassistant_api: true
+hassio_api: true
+hassio_role: default
+services:
+  - mqtt:need
+map:
+  - share:rw
+options:
+  camera_entity: camera.doorbell
+  scan_interval: 300
+  lookup_file: /share/parking_finder/car_positions.jsonl
+  conf: 0.25
+  dilate: 10
+  imgsz: 1280
+  classes:
+    - 2
+    - 5
+    - 7
+schema:
+  camera_entity: str
+  scan_interval: int(30,)
+  lookup_file: str
+  conf: float(0,1)
+  dilate: int(0,)
+  imgsz: int(320,)
+  classes:
+    - int
