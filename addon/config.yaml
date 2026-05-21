@@ -1,5 +1,5 @@
 name: Parking Finder
-version: "0.1.3"
+version: "0.1.4"
 slug: parking_finder
 description: Detect open parking spots from a camera using YOLO segmentation
 url: https://github.com/daveyijzermans/parking-finder
@@ -22,6 +22,7 @@ options:
   dilate: 10
   imgsz: 1280
   own_vehicle_iou: 0.85
+  min_car_area: 0
   classes:
     - car
     - bus
@@ -34,5 +35,6 @@ schema:
   dilate: int(0,)
   imgsz: int(320,)
   own_vehicle_iou: float(0,1)
+  min_car_area: int(0,)
   classes:
     - list(bicycle|car|motorcycle|bus|truck)

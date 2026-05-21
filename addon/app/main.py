@@ -87,6 +87,7 @@ def main():
             imgsz=opts["imgsz"],
             dilate=opts["dilate"],
             own_vehicle_iou=opts["own_vehicle_iou"],
+            min_car_area=opts["min_car_area"],
         )
     except FileNotFoundError:
         sys.exit(f"Lookup file not found: {opts['lookup_file']} — "

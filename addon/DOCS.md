@@ -35,6 +35,7 @@ Assistant as three MQTT-discovered entities:
 | `dilate` | Safety margin in pixels around detected vehicles. |
 | `imgsz` | YOLO inference image size (multiple of 32). |
 | `own_vehicle_iou` | Min overlap (0–1) for a detected car to count as your own vehicle. Higher = stricter match. |
+| `min_car_area` | Ignore detected vehicles smaller than this many pixels (at the lookup resolution). `0` disables. Use it to drop distant/background cars. |
 | `classes` | Vehicle types treated as obstacles: `bicycle`, `car`, `motorcycle`, `bus`, `truck`. |
 
 The camera snapshot and MQTT broker credentials are obtained automatically

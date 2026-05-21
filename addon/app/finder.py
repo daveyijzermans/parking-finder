@@ -46,12 +46,13 @@ class ParkingResult:
 class ParkingFinder:
     def __init__(self, lookup_path, model_path="yolov8s-seg.pt",
                  conf=0.25, classes=(2, 5, 7), imgsz=1280, dilate=10,
-                 own_vehicle_iou=0.85):
+                 own_vehicle_iou=0.85, min_car_area=0):
         self.conf = conf
         self.classes = list(classes)
         self.imgsz = imgsz
         self.dilate = dilate
         self.own_vehicle_iou = own_vehicle_iou
+        self.min_car_area = min_car_area
         self.contours, self.filenames, self.lh, self.lw = _load_lookup(lookup_path)
         self.model = YOLO(model_path)
 
@@ -62,16 +63,19 @@ class ParkingFinder:
         obstacles = np.zeros((th, tw), dtype=np.uint8)
         vehicle_masks = []
         boxes = []
-        if r.masks is not None and len(r.masks.data) > 0:
-            for m in r.masks.data.cpu().numpy():
+        if r.masks is not None and r.boxes is not None and len(r.masks.data) > 0:
+            for m, box, c, cls in zip(r.masks.data.cpu().numpy(),
+                                      r.boxes.xyxy.cpu().numpy(),
+                                      r.boxes.conf.cpu().numpy(),
+                                      r.boxes.cls.cpu().numpy()):
                 m_resized = cv2.resize(m, (tw, th), interpolation=cv2.INTER_LINEAR)
                 mask = (m_resized > 0.5).astype(np.uint8) * 255
+                # drop detections too small to be a relevant vehicle
+                # (e.g. a neighbour's car far away in the background)
+                if int(np.count_nonzero(mask)) < self.min_car_area:
+                    continue
                 vehicle_masks.append(mask)
                 obstacles |= mask
-        if r.boxes is not None:
-            for box, c, cls in zip(r.boxes.xyxy.cpu().numpy(),
-                                   r.boxes.conf.cpu().numpy(),
-                                   r.boxes.cls.cpu().numpy()):
                 boxes.append((box.tolist(), float(c), int(cls)))
         if self.dilate > 0 and obstacles.any():
             k = cv2.getStructuringElement(
